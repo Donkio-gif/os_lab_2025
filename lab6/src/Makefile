@@ -4,13 +4,19 @@ LDLIBS = -lpthread
 
 all: server client
 
-server: server.c
-	$(CC) $(CFLAGS) -o server server.c $(LDLIBS)
+common.o: common.c common.h
+	$(CC) $(CFLAGS) -c common.c -o common.o
 
-client: client.c
-	$(CC) $(CFLAGS) -o client client.c $(LDLIBS)
+libcommon.a: common.o
+	ar rcs libcommon.a common.o
+
+server: server.c common.h libcommon.a
+	$(CC) $(CFLAGS) -o server server.c -L. -lcommon $(LDLIBS)
+
+client: client.c common.h libcommon.a
+	$(CC) $(CFLAGS) -o client client.c -L. -lcommon $(LDLIBS)
 
 clean:
-	rm -f server client
+	rm -f server client *.o *.a
 
 .PHONY: all clean

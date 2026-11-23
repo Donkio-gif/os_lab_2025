@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "common.h"
+
 #include <errno.h>
 #include <getopt.h>
 #include <netdb.h>
@@ -28,19 +30,6 @@ struct ServerTask {
   uint64_t result; 
   bool ok;         
 };
-
-uint64_t MultModulo(uint64_t a, uint64_t b, uint64_t mod) {
-  uint64_t result = 0;
-  a = a % mod;
-  while (b > 0) {
-    if (b % 2 == 1)
-      result = (result + a) % mod;
-    a = (a * 2) % mod;
-    b /= 2;
-  }
-
-  return result % mod;
-}
 
 bool ConvertStringToUI64(const char *str, uint64_t *val) {
   char *end = NULL;
@@ -148,8 +137,6 @@ int main(int argc, char **argv) {
   char servers[255] = {'\0'};
 
   while (true) {
-    int current_optind = optind ? optind : 1;
-
     static struct option options[] = {{"k", required_argument, 0, 0},
                                       {"mod", required_argument, 0, 0},
                                       {"servers", required_argument, 0, 0},
